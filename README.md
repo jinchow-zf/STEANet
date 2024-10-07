@@ -20,9 +20,6 @@ conda activate STEANet
 # install pytorch
 conda install pytorch==1.10.0 torchvision==0.11.0 torchaudio==0.10.0 cudatoolkit=11.3 -c pytorch -c conda-forge
 
-# install CLIP
-pip install git+https://github.com/openai/CLIP.git
-
 # install other requirements
 pip install -r requirements.txt
 
@@ -40,7 +37,7 @@ bash tools/dist_train.sh <PATH/TO/CONFIG> <NUM_GPU> --test-last --validate --cfg
 ```
 
 ### Key Files
-- The model is implemented in vit_clip.py https://github.com/taoyang1122/adapt-image-models/blob/main/mmaction/models/backbones/vit_clip.py. You may refer to it for more details.
+- The model is implemented in [vit_clip.py]() https://github.com/taoyang1122/adapt-image-models/blob/main/mmaction/models/backbones/vit_clip.py. You may refer to it for more details.
 - The weights are frozen at https://github.com/taoyang1122/adapt-image-models/blob/main/tools/train.py#L187.
 
 ## Evaluation
