@@ -11,7 +11,7 @@ In this work, we propose a novel Spatiotemporal Emotion Adaptation Network for r
 
 ## Installation
 
-The codes are based on [AIM][https://github.com/open-mmlab/mmaction2](https://github.com/taoyang1122/adapt-image-models), which is based on [MMAction2](https://github.com/open-mmlab/mmaction2). Thanks for their awesome works! To prepare the environment, please follow the following instructions.
+The codes are based on [AIM](https://github.com/taoyang1122/adapt-image-models), which is based on [MMAction2](https://github.com/open-mmlab/mmaction2). Thanks for their awesome works! To prepare the environment, please follow the following instructions.
 ```shell
 # create virtual environment
 conda create -n STEANet python=3.7.13
