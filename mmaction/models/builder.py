@@ -13,6 +13,7 @@ RECOGNIZERS = MODELS
 LOSSES = MODELS
 LOCALIZERS = MODELS
 
+
 try:
     from mmdet.models.builder import DETECTORS, build_detector
 except (ImportError, ModuleNotFoundError):
