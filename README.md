@@ -29,22 +29,6 @@ pip install -r requirements.txt
 # install mmaction2
 python setup.py develop
 ```
-### Install Apex:
-We use apex for mixed precision training by default. To install apex, please follow the instructions in the [repo](https://github.com/NVIDIA/apex).
-
-If you would like to disable apex, comment out the following code block in the [configuration files](configs/recognition/vit/):
-```
-# do not use mmcv version fp16
-fp16 = None
-optimizer_config = dict(
-    type="DistOptimizerHook",
-    update_interval=1,
-    grad_clip=None,
-    coalesce=True,
-    bucket_size_mb=-1,
-    use_fp16=True,
-)
-```
 
 ## Training
 The training configs of different experiments are provided in `configs/recognition/vit/`. To run experiments, please use the following command. `PATH/TO/CONFIG` is the training config you want to use. The default training setting is 8GPU with a batchsize of 64.
