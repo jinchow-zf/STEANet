@@ -29,16 +29,18 @@ pip install -r requirements.txt
 # install mmaction2
 python setup.py develop
 ```
+## Backbone Preparation
+We use the CLIP checkpoints from the official release. Put the downloaded checkpoint paths in
+
 
 ## Training
-The training configs of different experiments are provided in `configs/recognition/vit/`. To run experiments, please use the following command. `PATH/TO/CONFIG` is the training config you want to use. The default training setting is 8GPU with a batchsize of 64.
+The training configurations for different experiments on the two datasets are provided in `configs/recognition/vit/`. To run the experiments, please use the following command. Replace `PATH/TO/CONFIG` with the path to the training configuration you want to use, and `PATH/TO/OUTPUT` with the directory where you want to save the output.
 ```shell
 bash tools/dist_train.sh <PATH/TO/CONFIG> <NUM_GPU> --test-last --validate --cfg-options work_dir=<PATH/TO/OUTPUT>
 ```
-We also provide a training script in `run_exp.sh`. You can simply change the training config to train different models.
 
 ### Key Files
-- The model is implemented in https://github.com/taoyang1122/adapt-image-models/blob/main/mmaction/models/backbones/vit_clip.py. You may refer to it on how to apply AIM to your model.
+- The model is implemented in vit_clip.py https://github.com/taoyang1122/adapt-image-models/blob/main/mmaction/models/backbones/vit_clip.py. You may refer to it for more details.
 - The weights are frozen at https://github.com/taoyang1122/adapt-image-models/blob/main/tools/train.py#L187.
 
 ## Evaluation
