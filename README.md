@@ -26,19 +26,18 @@ pip install -r requirements.txt
 # install mmaction2
 python setup.py develop
 ```
-## Backbone Preparation
-We use the CLIP checkpoints from the official release. Put the downloaded checkpoint paths in
-
 
 ## Training
+We use the CLIP checkpoints from the [official release](https://github.com/openai/CLIP). In our experiments, we choose ViT-B/16 as the image backbone by default, as it achieves a balance between
+performance and computational complexity.
+
 The training configurations for different experiments on the two datasets are provided in `configs/recognition/vit/`. To run the experiments, please use the following command. Replace `PATH/TO/CONFIG` with the path to the training configuration you want to use, and `PATH/TO/OUTPUT` with the directory where you want to save the output.
 ```shell
 bash tools/dist_train.sh <PATH/TO/CONFIG> <NUM_GPU> --test-last --validate --cfg-options work_dir=<PATH/TO/OUTPUT>
 ```
 
 ### Key Files
-- The model is implemented in [vit_clip.py]() https://github.com/taoyang1122/adapt-image-models/blob/main/mmaction/models/backbones/vit_clip.py. You may refer to it for more details.
-- The weights are frozen at https://github.com/taoyang1122/adapt-image-models/blob/main/tools/train.py#L187.
+The model is implemented in [vit_clip.py](https://github.com/jinchow-zf/STEANet/blob/main/mmaction/models/backbones/vit_clip.py). You may refer to it for more details.
 
 ## Evaluation
 The code will do the evaluation after training. If you would like to evaluate a model only, please use the following command,
