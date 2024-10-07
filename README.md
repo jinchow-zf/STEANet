@@ -27,6 +27,10 @@ pip install -r requirements.txt
 python setup.py develop
 ```
 
+## Key Files
+The model is implemented in [vit_clip.py](https://github.com/jinchow-zf/STEANet/blob/main/mmaction/models/backbones/vit_clip.py). You may refer to it for more details.
+
+
 ## Training
 We use the CLIP checkpoints from the [official release](https://github.com/openai/CLIP). In our experiments, we choose ViT-B/16 as the image backbone by default, as it achieves a balance between
 performance and computational complexity.
@@ -35,9 +39,6 @@ The training configurations for different experiments on the two datasets are pr
 ```shell
 bash tools/dist_train.sh <PATH/TO/CONFIG> <NUM_GPU> --test-last --validate --cfg-options work_dir=<PATH/TO/OUTPUT>
 ```
-
-### Key Files
-The model is implemented in [vit_clip.py](https://github.com/jinchow-zf/STEANet/blob/main/mmaction/models/backbones/vit_clip.py). You may refer to it for more details.
 
 ## Evaluation
 The code will do the evaluation after training. If you would like to evaluate a model only, please use the following command.
