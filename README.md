@@ -6,12 +6,12 @@ This repo is the official implementation of ["Efficient Affective Representation
 
 In this work, we propose a novel Spatiotemporal Emotion Adaptation Network for recognizing emotions in a parameter efficient manner. The framework of the proposed method is shown as below.
 
-<p><img src="figures/overallstructure.png" width="800" /></p>
+<p><img src="figure/pipeline.jpg" width="800" /></p>
 
 
 ## Installation
 
-The codes are based on [AIM]([https://github.com/open-mmlab/mmaction2](https://github.com/taoyang1122/adapt-image-models)), which is based on [MMAction2](https://github.com/open-mmlab/mmaction2). Thanks for their awesome works! To prepare the environment, please follow the following instructions.
+The codes are based on [AIM]([https://github.com/open-mmlab/mmaction2](https://github.com/taoyang1122/adapt-image-models), which is based on [MMAction2](https://github.com/open-mmlab/mmaction2). Thanks for their awesome works! To prepare the environment, please follow the following instructions.
 ```shell
 # create virtual environment
 conda create -n STEANet python=3.7.13
