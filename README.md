@@ -28,7 +28,7 @@ python setup.py develop
 ```
 
 ## Key Files
-The model is implemented in [vit_clip.py](https://github.com/jinchow-zf/STEANet/blob/main/mmaction/models/backbones/vit_clip.py). You may refer to it for more details.
+The proposed STEANet is implemented in [vit_clip.py](https://github.com/jinchow-zf/STEANet/blob/main/mmaction/models/backbones/vit_clip.py). You may refer to it for more details.
 
 
 ## Training
