@@ -12,49 +12,119 @@ from einops import rearrange
 from ..builder import BACKBONES
 
 
-class STAdapter(nn.Module):
-
-    def __init__(self, in_channels=768, adapter_channels=384):
+class Adapter(nn.Module):
+    def __init__(self, D_features, mlp_ratio=0.25, act_layer=nn.GELU, skip_connect=True):
         super().__init__()
-        self.fc1 = nn.Linear(in_channels, adapter_channels)
-        self.conv = nn.Conv3d(
-            adapter_channels, adapter_channels,
-            kernel_size=(3, 1, 1),
-            stride=(1, 1, 1),
-            padding=tuple([1, 0, 0]),
-            groups=adapter_channels,
+        self.skip_connect = skip_connect
+        D_hidden_features = int(D_features * mlp_ratio)
+        self.act = act_layer()
+        self.D_fc1 = nn.Linear(D_features, D_hidden_features)
+        self.D_fc2 = nn.Linear(D_hidden_features, D_features)
+
+    def forward(self, x):
+        # x is (BT, HW+1, D)
+        xs = self.D_fc1(x)
+        xs = self.act(xs)
+        xs = self.D_fc2(xs)
+        if self.skip_connect:
+            x = x + xs
+        else:
+            x = xs
+        return x
+
+# Temporal Emotion Adapter
+class TEA(nn.Module):
+    def __init__(self, D_features, mlp_ratio=0.25, act_layer=nn.GELU, skip_connect=True):
+        super().__init__()
+        self.skip_connect = skip_connect
+        self.D_hidden_features = int(D_features * mlp_ratio)
+        self.act = act_layer()
+        self.D_fc1 = nn.Linear(D_features, self.D_hidden_features)
+        self.conv1d = nn.Conv1d(in_channels=self.D_hidden_features, out_channels=self.D_hidden_features, kernel_size=1, stride=1,
+                                padding=0)
+        self.D_fc2 = nn.Linear(self.D_hidden_features, D_features)
+        nn.init.constant_(self.conv1d.weight, 0.)
+        nn.init.constant_(self.conv1d.bias, 0.)
+
+    def forward(self, x, N: int = 197):
+        # x is (T, BN, D)
+        T, BN, D = x.size()
+        B = BN // N
+        C = self.D_hidden_features
+        xs = self.D_fc1(x)
+        xs = xs.view(B*N, C, T).contiguous()
+        xs = self.conv1d(xs)
+        xs = xs.view(T, B*N, C).contiguous()
+        xs = self.D_fc2(xs)
+        # xs = xs.view(N, B*T, D).contiguous()
+        return xs
+
+
+# Spatial Emotion Adapter
+class SEA(nn.Module):
+    def __init__(self, D_features, mlp_ratio=0.25):
+        super().__init__()
+        self.D_hidden_features = int(D_features * mlp_ratio)
+        self.D_fc1 = nn.Linear(D_features, self.D_hidden_features)
+        self.D_fc2 = nn.Linear(self.D_hidden_features, D_features)
+        self.conv2d = nn.Conv2d(
+            self.D_hidden_features, self.D_hidden_features,
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            groups=self.D_hidden_features,
         )
-        self.fc2 = nn.Linear(adapter_channels, in_channels)
-        nn.init.constant_(self.conv.weight, 0.)
-        nn.init.constant_(self.conv.bias, 0.)
-        nn.init.constant_(self.fc1.bias, 0.)
-        nn.init.constant_(self.fc2.bias, 0.)
+        nn.init.constant_(self.conv2d.weight, 0.)
+        nn.init.constant_(self.conv2d.bias, 0.)
 
-    def forward(self, x, T):
-        BT, L, C = x.size()
-        B = BT // T
-        Ca = self.conv.in_channels
-        H = W = round(math.sqrt(L - 1))
-        assert L - 1 == H * W
-        x_id = x
-        x = x[:, 1:, :]
-        x = self.fc1(x)
-        x = x.view(B, T, H, W, Ca).permute(0, 4, 1, 2, 3).contiguous()
+    def forward(self, x):
+        n, bt, d = x.size()
+        Cm = self.D_hidden_features
+        h = w = round(math.sqrt(n - 1))
+        assert n - 1 == h * w
+        x = x[1:, :, :]
+        x = self.D_fc1(x)
+        x = x.view(h, w, bt, Cm).permute(2, 3, 0, 1).contiguous()
+        x = self.conv2d(x)
+        x = x.permute(0, 1, 2, 3).contiguous().view(n - 1, bt, Cm)
+        x = self.D_fc2(x)
+        return x
 
-        # Whether cuDNN should be temporarily disable for 3D depthwise convolution.
-        # For some PyTorch builds the built-in 3D depthwise convolution may be much
-        # faster than the cuDNN implementation. You may experiment with your specific
-        # environment to find out the optimal option.
-        DWCONV3D_DISABLE_CUDNN = True
-        cudnn_enabled = torch.backends.cudnn.enabled
-        torch.backends.cudnn.enabled = cudnn_enabled and DWCONV3D_DISABLE_CUDNN
-        x = self.conv(x)
-        torch.backends.cudnn.enabled = cudnn_enabled
 
-        x = x.permute(0, 2, 3, 4, 1).contiguous().view(BT, L - 1, Ca)
-        x = self.fc2(x)
-        x_id[:, 1:, :] += x
-        return x_id
+# class STAdapter(nn.Module):
+#     def __init__(self, in_channels=768, hidden_channels=384):
+#         super().__init__()
+#         self.fc1 = nn.Linear(in_channels, hidden_channels)
+#         self.fc2 = nn.Linear(hidden_channels, in_channels)
+#         self.conv = nn.Conv3d(
+#             hidden_channels, hidden_channels,
+#             kernel_size=(3, 1, 1),
+#             stride=(1, 1, 1),
+#             padding=tuple([1, 0, 0]),
+#             groups=hidden_channels,
+#         )
+#         self.hidden_channels = hidden_channels
+#         nn.init.constant_(self.conv.weight, 0.)
+#         nn.init.constant_(self.conv.bias, 0.)
+#
+#     def forward(self, x, T: int = 32):
+#         BT, L, C = x.size()
+#         B = BT // T
+#         Ca = self.hidden_channels
+#         H = W = round(math.sqrt(L - 1))
+#         assert L - 1 == H * W
+#         x_id = x
+#         x = x[:, 1:, :]
+#
+#         x = self.fc1(x)
+#         x = x.view(B, T, H, W, Ca).permute(0, 4, 1, 2, 3).contiguous()
+#
+#         x = self.conv(x)
+#
+#         x = x.permute(0, 2, 3, 4, 1).contiguous().view(BT, L - 1, Ca)
+#         x = self.fc2(x)
+#         x_id[:, 1:, :] += x
+#         return x_id
 
 
 class LayerNorm(nn.LayerNorm):
@@ -86,7 +156,15 @@ class ResidualAttentionBlock(nn.Module):
         self.ln_2 = LayerNorm(d_model)
         self.attn_mask = attn_mask
         self.n_head = n_head
+        # self.ST_Adapter = STAdapter()
+        self.MLP_Adapter = Adapter(d_model, skip_connect=False)
+        self.S_Adapter = Adapter(d_model)
         self.scale = scale
+        self.T_Adapter = Adapter(d_model, skip_connect=False)
+        self.TEA = TEA(d_model)
+        self.SEA = SEA(d_model)
+        if num_tadapter == 2:
+            self.T_Adapter_in = Adapter(d_model)
         self.num_frames = num_frames
         self.drop_path = DropPath(drop_path) if drop_path > 0. else nn.Identity()
 
@@ -97,9 +175,26 @@ class ResidualAttentionBlock(nn.Module):
     def forward(self, x: torch.Tensor):
         ## x shape [HW+1, BT, D]
         n, bt, d = x.shape
-        ## x shape [BT, HW+1, D]
-        x = x + self.attention(self.ln_1(x))
-        x = x + self.mlp(self.ln_2(x))
+
+        ## temporal adaptation
+        xt = rearrange(x, 'n (b t) d -> t (b n) d', t=self.num_frames)
+        xt_ln = self.ln_1(xt)
+        if self.num_tadapter == 2:
+            xt = self.T_Adapter(self.attention(self.T_Adapter_in(xt_ln)))
+        else:
+            xt = self.T_Adapter(self.attention(xt_ln))
+        xt = rearrange(xt, 't (b n) d -> n (b t) d', n=n)
+        x_conv1 = self.TEA(xt_ln).view(n, bt, d).contiguous()
+        x = x + self.drop_path(xt) + x_conv1
+        ## spatial adaptation
+        xs_ln = self.ln_1(x)
+        x_conv2 = self.SEA(xs_ln)
+        xs = self.S_Adapter(self.attention(xs_ln))
+        xs[1:, :, :] += x_conv2
+        x = x + xs
+        ## joint adaptation
+        xn = self.ln_2(x)
+        x = x + self.mlp(xn) + self.drop_path(self.scale * self.MLP_Adapter(xn))
         return x
 
 
@@ -176,7 +271,48 @@ class ViT_CLIP(nn.Module):
         else:
             raise TypeError('pretrained must be a str or None')
 
+        ## initialize S_Adapter
+        for n, m in self.transformer.named_modules():
+            if 'S_Adapter' in n:
+                for n2, m2 in m.named_modules():
+                    if 'D_fc2' in n2:
+                        if isinstance(m2, nn.Linear):
+                            nn.init.constant_(m2.weight, 0)
+                            nn.init.constant_(m2.bias, 0)
 
+        ## initialize T_Adapter
+        for n, m in self.transformer.named_modules():
+            if 'T_Adapter' in n:
+                for n2, m2 in m.named_modules():
+                    if 'D_fc2' in n2:
+                        if isinstance(m2, nn.Linear):
+                            nn.init.constant_(m2.weight, 0)
+                            nn.init.constant_(m2.bias, 0)
+
+        ## initialize MLP_Adapter
+        for n, m in self.transformer.named_modules():
+            if 'MLP_Adapter' in n:
+                for n2, m2 in m.named_modules():
+                    if 'D_fc2' in n2:
+                        if isinstance(m2, nn.Linear):
+                            nn.init.constant_(m2.weight, 0)
+                            nn.init.constant_(m2.bias, 0)
+        ## initialize TEA
+        for n, m in self.transformer.named_modules():
+            if 'TEA' in n:
+                for n2, m2 in m.named_modules():
+                    if 'D_fc2' in n2:
+                        if isinstance(m2, nn.Linear):
+                            nn.init.constant_(m2.weight, 0)
+                            nn.init.constant_(m2.bias, 0)
+        ## initialize SEA
+        for n, m in self.transformer.named_modules():
+            if 'SEA' in n:
+                for n2, m2 in m.named_modules():
+                    if 'D_fc2' in n2:
+                        if isinstance(m2, nn.Linear):
+                            nn.init.constant_(m2.weight, 0)
+                            nn.init.constant_(m2.bias, 0)
     @torch.jit.ignore
     def no_weight_decay(self):
         return {'absolute_pos_embed', 'temporal_embedding'}
