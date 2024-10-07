@@ -40,7 +40,7 @@ bash tools/dist_train.sh <PATH/TO/CONFIG> <NUM_GPU> --test-last --validate --cfg
 The model is implemented in [vit_clip.py](https://github.com/jinchow-zf/STEANet/blob/main/mmaction/models/backbones/vit_clip.py). You may refer to it for more details.
 
 ## Evaluation
-The code will do the evaluation after training. If you would like to evaluate a model only, please use the following command,
+The code will do the evaluation after training. If you would like to evaluate a model only, please use the following command.
 ```shell
 bash tools/dist_test.sh <PATH/TO/CONFIG> <CHECKPOINT_FILE> <NUM_GPU> --eval top_k_accuracy
 ```
