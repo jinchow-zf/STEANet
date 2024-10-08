@@ -91,42 +91,6 @@ class SEA(nn.Module):
         return x
 
 
-# class STAdapter(nn.Module):
-#     def __init__(self, in_channels=768, hidden_channels=384):
-#         super().__init__()
-#         self.fc1 = nn.Linear(in_channels, hidden_channels)
-#         self.fc2 = nn.Linear(hidden_channels, in_channels)
-#         self.conv = nn.Conv3d(
-#             hidden_channels, hidden_channels,
-#             kernel_size=(3, 1, 1),
-#             stride=(1, 1, 1),
-#             padding=tuple([1, 0, 0]),
-#             groups=hidden_channels,
-#         )
-#         self.hidden_channels = hidden_channels
-#         nn.init.constant_(self.conv.weight, 0.)
-#         nn.init.constant_(self.conv.bias, 0.)
-#
-#     def forward(self, x, T: int = 32):
-#         BT, L, C = x.size()
-#         B = BT // T
-#         Ca = self.hidden_channels
-#         H = W = round(math.sqrt(L - 1))
-#         assert L - 1 == H * W
-#         x_id = x
-#         x = x[:, 1:, :]
-#
-#         x = self.fc1(x)
-#         x = x.view(B, T, H, W, Ca).permute(0, 4, 1, 2, 3).contiguous()
-#
-#         x = self.conv(x)
-#
-#         x = x.permute(0, 2, 3, 4, 1).contiguous().view(BT, L - 1, Ca)
-#         x = self.fc2(x)
-#         x_id[:, 1:, :] += x
-#         return x_id
-
-
 class LayerNorm(nn.LayerNorm):
     """Subclass torch's LayerNorm to handle fp16."""
 
