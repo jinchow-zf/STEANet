@@ -185,8 +185,10 @@ def main():
 
     ## freeze some parameters
     for name, param in model.named_parameters():
-        if 'temporal_embedding' not in name and 'ln_post' not in name and 'cls_head' not in name and 'Adapter' not in name:
+        if 'temporal_embedding' not in name and 'ln_post' not in name and 'cls_head' not in name and 'Adapter' not in name and 'SEA' not in name and 'TEA' not in name:
             param.requires_grad = False
+
+
 
     for name, param in model.named_parameters():
         logger.info('{}: {}'.format(name, param.requires_grad))
