@@ -32,6 +32,7 @@ class Adapter(nn.Module):
             x = xs
         return x
 
+
 # Temporal Emotion Adapter
 class TEA(nn.Module):
     def __init__(self, D_features, mlp_ratio=0.25, act_layer=nn.GELU, skip_connect=True):
@@ -78,15 +79,14 @@ class SEA(nn.Module):
         nn.init.constant_(self.conv2d.bias, 0.)
 
     def forward(self, x):
-        n, bt, d = x.size()
+        m, bt, d = x.size()
         Cm = self.D_hidden_features
-        h = w = round(math.sqrt(n - 1))
-        assert n - 1 == h * w
-        x = x[1:, :, :]
+        h = w = round(math.sqrt(m))
+        assert m == h * w
         x = self.D_fc1(x)
         x = x.view(h, w, bt, Cm).permute(2, 3, 0, 1).contiguous()
         x = self.conv2d(x)
-        x = x.permute(0, 1, 2, 3).contiguous().view(n - 1, bt, Cm)
+        x = x.permute(0, 1, 2, 3).contiguous().view(m, bt, Cm)
         x = self.D_fc2(x)
         return x
 
@@ -120,7 +120,6 @@ class ResidualAttentionBlock(nn.Module):
         self.ln_2 = LayerNorm(d_model)
         self.attn_mask = attn_mask
         self.n_head = n_head
-        # self.ST_Adapter = STAdapter()
         self.MLP_Adapter = Adapter(d_model, skip_connect=False)
         self.S_Adapter = Adapter(d_model)
         self.scale = scale
@@ -152,9 +151,9 @@ class ResidualAttentionBlock(nn.Module):
         x = x + self.drop_path(xt) + x_conv1
         ## spatial adaptation
         xs_ln = self.ln_1(x)
-        x_conv2 = self.SEA(xs_ln)
+        x_conv2 = self.SEA(xs_ln[1:, :, :])  # slice
         xs = self.S_Adapter(self.attention(xs_ln))
-        xs[1:, :, :] += x_conv2
+        xs[1:, :, :] += x_conv2  # zero-padding for addition
         x = x + xs
         ## joint adaptation
         xn = self.ln_2(x)
