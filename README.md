@@ -1,6 +1,6 @@
-# Efficient Affective Representation Learning in User-Generated Videos via Spatiotemporal Emotion Adaptation Network
+# Efficient learning of affective representations in user-generated videos via spatiotemporal emotional adaptation network
 
-This repo is the official implementation of "Efficient Affective Representation Learning in User-Generated Videos via Spatiotemporal Emotion Adaptation Network".
+This repo is the official implementation of "Efficient learning of affective representations in user-generated videos via spatiotemporal emotional adaptation network".
 
 ## Introduction
 
