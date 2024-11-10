@@ -30,7 +30,7 @@ pip install git+https://github.com/openai/CLIP.git
 python setup.py develop
 ```
 ## Apex
-We use apex for mixed precision training by default. Please refer to the official [installation]([https://github.com/open-mmlab/mmaction2](https://github.com/NVIDIA/apex)).
+We use apex for mixed precision training by default. Please refer to the official [installation](https://github.com/NVIDIA/apex).
 
 ## Key Files
 The proposed STEANet is implemented in [vit_clip.py](https://github.com/jinchow-zf/STEANet/blob/main/mmaction/models/backbones/vit_clip.py). You may refer to it for more details.
