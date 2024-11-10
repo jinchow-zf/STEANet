@@ -6,7 +6,7 @@ This repo is the official implementation of "Efficient learning of affective rep
 
 In this work, we propose a novel Spatiotemporal Emotion Adaptation Network for recognizing emotions in a parameter efficient manner. The framework of the proposed method is shown as below.
 
-<p><img src="figure/pipeline.jpg" width="800" /></p>
+<p><img src="figure/figure.jpg" width="800" /></p>
 
 
 ## Installation
