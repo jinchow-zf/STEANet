@@ -23,6 +23,9 @@ conda install pytorch==1.10.0 torchvision==0.11.0 torchaudio==0.10.0 cudatoolkit
 # install other requirements
 pip install -r requirements.txt
 
+# install clip
+pip install git+https://github.com/openai/CLIP.git
+
 # install mmaction2
 python setup.py develop
 ```
