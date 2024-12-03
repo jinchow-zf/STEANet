@@ -32,8 +32,8 @@ python setup.py develop
 ## Apex
 We use apex for mixed precision training by default. Please refer to the official [installation](https://github.com/NVIDIA/apex).
 
-## Key Files
-The proposed STEANet is implemented in [vit_clip.py](https://github.com/jinchow-zf/STEANet/blob/main/mmaction/models/backbones/vit_clip.py). You may refer to it for more details.
+## Dataset
+The used datasets are provided in [VideoEmotion-8]([https://github.com/open-mmlab/mmaction2](https://drive.google.com/drive/folders/0B5peJ1MHnIWGd3pFbzMyTG5BSGs?resourcekey=0-hZ1jo5t1hIauRpYhYIvWYA)) and [Ekman-6]([https://github.com/open-mmlab/mmaction2](https://github.com/kittenish/Frame-Transformer-Network)). The train/test splits in both two datasets follow the official procedure. To prepare the data, you can refer to [MMAction2](https://github.com/open-mmlab/mmaction2) for a general guideline.
 
 
 ## Training
