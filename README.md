@@ -1,6 +1,6 @@
-# Efficient learning of affective representations in user-generated videos via spatiotemporal emotional adaptation network
+# STEANet: Efficiently learning spatiotemporal affective representations from videos
 
-This repo is the official implementation of "Efficient learning of affective representations in user-generated videos via spatiotemporal emotional adaptation network".
+This repo is the official implementation of "STEANet: Efficiently learning spatiotemporal affective representations from videos".
 
 ## Introduction
 
