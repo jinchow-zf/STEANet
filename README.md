@@ -32,7 +32,7 @@ python setup.py develop
 ## Apex
 We use apex for mixed precision training by default. Please refer to the official [installation](https://github.com/NVIDIA/apex).
 
-## Dataset
+## Datasets
 The used datasets are provided in [VideoEmotion-8](https://drive.google.com/drive/folders/0B5peJ1MHnIWGd3pFbzMyTG5BSGs?resourcekey=0-hZ1jo5t1hIauRpYhYIvWYA) and [Ekman-6](https://github.com/kittenish/Frame-Transformer-Network). The train/test splits in both two datasets follow the official procedure. To prepare the data, you can refer to [MMAction2](https://github.com/open-mmlab/mmaction2) for a general guideline.
 
 ## Training
@@ -50,8 +50,9 @@ The code will do the evaluation after training. If you would like to evaluate a 
 bash tools/dist_test.sh <PATH/TO/CONFIG> <CHECKPOINT_FILE> <NUM_GPU> --eval top_k_accuracy
 ```
 
-## Model
+## Models
 We now provide the model weights for VideoEmotion-8 and Ekman-6 datasets in the following [link](https://pan.baidu.com/s/1X1ssWW4PGU3LJFwIw6LsjQ?pwd=GNNU).
+
 
 Cheerfully, our work is under review. If you are interested in our work, please email to [jinchow21@sina.com](jinchow21@sina.com).
 
