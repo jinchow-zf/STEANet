@@ -10,8 +10,8 @@ model = dict(
 
 # dataset settings
 dataset_type = 'VideoDataset'
-data_root = 'data/to/dataset'
-data_root_val = 'data/to/dataset'
+data_root = 'data/to/thedataset'
+data_root_val = 'data/to/thedataset'
 ann_file_train = 'data/to/path'
 ann_file_val = 'data/to/path'
 ann_file_test = 'data/to/path'
