@@ -54,6 +54,9 @@ bash tools/dist_test.sh <PATH/TO/CONFIG> <CHECKPOINT_FILE> <NUM_GPU> --eval top_
 We now provide the model weights for VideoEmotion-8 and Ekman-6 datasets in the following [link](https://pan.baidu.com/s/1X1ssWW4PGU3LJFwIw6LsjQ?pwd=GNNU).
 
 
-Cheerfully, our work is under review. If you are interested in our work, please email to [jinchow21@sina.com](jinchow21@sina.com).
+If you are interested in our work, please email to [jinchow21@sina.com](jinchow21@sina.com). We would be fairly pleased if you find the code useful and cite the following paper.
+```shell
+bash tools/dist_test.sh <PATH/TO/CONFIG> <CHECKPOINT_FILE> <NUM_GPU> --eval top_k_accuracy
+```
 
 
