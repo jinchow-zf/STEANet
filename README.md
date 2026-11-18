@@ -56,7 +56,14 @@ We now provide the model weights for VideoEmotion-8 and Ekman-6 datasets in the 
 
 If you are interested in our work, please email to [jinchow21@sina.com](jinchow21@sina.com). We would be fairly pleased if you find the code useful and cite the following paper.
 ```shell
-bash tools/dist_test.sh <PATH/TO/CONFIG> <CHECKPOINT_FILE> <NUM_GPU> --eval top_k_accuracy
+@article{zhou2027STEANet,
+title = {STEANet: Efficiently learning spatio-temporal affective representations from videos},
+journal = {Artificial Intelligence},
+volume = {362},
+pages = {104660},
+year = {2027},
+author = {Jin Zhou and Yun Yi and Hanli Wang and Tinghua Wang and Wenyu Hu and Pengjie Tang},
+}
 ```
 
 
